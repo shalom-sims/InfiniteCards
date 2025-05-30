@@ -14,7 +14,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Create window programmatically
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        // Create our cards list view controller
+        let cardsListVC = CardsListViewController()
+        
+        // Wrap it in a navigation controller for navigation bar
+        let navigationController = UINavigationController(rootViewController: cardsListVC)
+        
+        // Set the navigation controller as root
+        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
+        
         return true
     }
 
