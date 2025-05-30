@@ -16,6 +16,23 @@ class CardCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
+    private let cardImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 8
+        imageView.backgroundColor = .systemGray6
+        return imageView
+    }()
+    
+    private let imageInitialLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 40, weight: .bold)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }()
+    
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18, weight: .bold)
@@ -54,17 +71,9 @@ class CardCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let statsStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 4
-        stack.distribution = .fillEqually
-        return stack
-    }()
-    
     private let winsLossesLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 11)
+        label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.textColor = .systemGray2
         return label
@@ -85,22 +94,24 @@ class CardCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(containerView)
         containerView.translatesAutoresizingMaskIntoConstraints = false
         
+        containerView.addSubview(cardImageView)
+        cardImageView.addSubview(imageInitialLabel)
         containerView.addSubview(nameLabel)
         containerView.addSubview(classLabel)
         containerView.addSubview(levelLabel)
         containerView.addSubview(ratingView)
-        containerView.addSubview(statsStackView)
         containerView.addSubview(winsLossesLabel)
         
         ratingView.addSubview(ratingLabel)
         
         // Auto Layout constraints - like CSS-in-JS or styled-components
+        cardImageView.translatesAutoresizingMaskIntoConstraints = false
+        imageInitialLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         classLabel.translatesAutoresizingMaskIntoConstraints = false
         levelLabel.translatesAutoresizingMaskIntoConstraints = false
         ratingView.translatesAutoresizingMaskIntoConstraints = false
         ratingLabel.translatesAutoresizingMaskIntoConstraints = false
-        statsStackView.translatesAutoresizingMaskIntoConstraints = false
         winsLossesLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -108,6 +119,15 @@ class CardCollectionViewCell: UICollectionViewCell {
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4),
+            
+            // Card image at top
+            cardImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
+            cardImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            cardImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
+            cardImageView.heightAnchor.constraint(equalTo: cardImageView.widthAnchor, multiplier: 0.7),
+            
+            imageInitialLabel.centerXAnchor.constraint(equalTo: cardImageView.centerXAnchor),
+            imageInitialLabel.centerYAnchor.constraint(equalTo: cardImageView.centerYAnchor),
             
             ratingView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 8),
             ratingView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
@@ -117,9 +137,9 @@ class CardCollectionViewCell: UICollectionViewCell {
             ratingLabel.centerXAnchor.constraint(equalTo: ratingView.centerXAnchor),
             ratingLabel.centerYAnchor.constraint(equalTo: ratingView.centerYAnchor),
             
-            nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 16),
+            nameLabel.topAnchor.constraint(equalTo: cardImageView.bottomAnchor, constant: 12),
             nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
-            nameLabel.trailingAnchor.constraint(equalTo: ratingView.leadingAnchor, constant: -8),
+            nameLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             
             classLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 4),
             classLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
@@ -129,11 +149,7 @@ class CardCollectionViewCell: UICollectionViewCell {
             levelLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             levelLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             
-            statsStackView.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 12),
-            statsStackView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
-            statsStackView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
-            
-            winsLossesLabel.topAnchor.constraint(equalTo: statsStackView.bottomAnchor, constant: 8),
+            winsLossesLabel.topAnchor.constraint(equalTo: levelLabel.bottomAnchor, constant: 8),
             winsLossesLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             winsLossesLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8),
             winsLossesLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -12)
@@ -146,7 +162,19 @@ class CardCollectionViewCell: UICollectionViewCell {
         classLabel.text = card.classType
         levelLabel.text = "Level \(card.level)"
         ratingLabel.text = "\(card.overallRating)"
-        winsLossesLabel.text = "W: \(card.wins) L: \(card.losses)"
+        winsLossesLabel.text = "W: \(card.wins) • L: \(card.losses)"
+        
+        // Check if dual-class (more than 2 class stats)
+        let isDualClass = card.classStats.count > 2
+        
+        // Set border for dual-class cards
+        if isDualClass {
+            containerView.layer.borderWidth = 3
+            containerView.layer.borderColor = UIColor.systemYellow.cgColor
+        } else {
+            containerView.layer.borderWidth = 0
+            containerView.layer.borderColor = UIColor.clear.cgColor
+        }
         
         // Set rating color based on value
         if card.overallRating >= 90 {
@@ -159,23 +187,34 @@ class CardCollectionViewCell: UICollectionViewCell {
             ratingView.backgroundColor = .systemGray
         }
         
-        // Clear previous stats
-        statsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        // Add main stats
-        let mainStats = [
-            ("ATK", max(card.patk, card.matk)),
-            ("DEF", max(card.pdef, card.mdef)),
-            ("SPD", card.speed),
-            ("VIT", card.vitality)
-        ]
-        
-        for (statName, statValue) in mainStats {
-            let statLabel = UILabel()
-            statLabel.font = .systemFont(ofSize: 11)
-            statLabel.text = "\(statName): \(statValue)"
-            statLabel.textAlignment = .center
-            statsStackView.addArrangedSubview(statLabel)
+        // Setup placeholder image
+        setupPlaceholderImage(for: card)
+    }
+    
+    private func setupPlaceholderImage(for card: Card) {
+        // Different gradient colors for different classes
+        let colors: [UIColor]
+        switch card.classType.lowercased() {
+        case "warrior":
+            colors = [.systemRed, .systemOrange]
+        case "mage", "sage", "stormcaster":
+            colors = [.systemBlue, .systemPurple]
+        case "thief", "assassin", "shadowpriest":
+            colors = [.systemGray, .black]
+        case "guardian", "vanguard":
+            colors = [.systemBrown, .systemGray]
+        case "ranger":
+            colors = [.systemGreen, .systemYellow]
+        default:
+            colors = [.systemIndigo, .systemTeal]
         }
+        
+        // Create gradient image with fixed size
+        let imageSize = CGRect(x: 0, y: 0, width: 200, height: 140)
+        let gradientImage = UIImage.gradientImage(bounds: imageSize, colors: colors)
+        cardImageView.image = gradientImage
+        
+        // Set initial
+        imageInitialLabel.text = String(card.name.prefix(1))
     }
 } 

@@ -101,13 +101,25 @@ extension CardsListViewController: UICollectionViewDelegateFlowLayout {
         let columns: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2
         let itemWidth = (availableWidth - (minimumItemSpacing * (columns - 1))) / columns
         
+        // Reduced height since we removed stats
         return CGSize(width: itemWidth, height: itemWidth * 1.3)
     }
     
     // Handle selection - like onPress in React Native
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let card = cards[indexPath.item]
-        print("Selected card: \(card.name)")
-        // TODO: Show card detail popup
+        
+        // Create detail view controller
+        let detailVC = CardDetailViewController()
+        
+        // Configure the view controller with card data
+        detailVC.configure(with: card)
+        
+        // Configure modal presentation style
+        detailVC.modalPresentationStyle = .overFullScreen
+        detailVC.modalTransitionStyle = .crossDissolve
+        
+        // Present modally
+        present(detailVC, animated: true)
     }
 } 

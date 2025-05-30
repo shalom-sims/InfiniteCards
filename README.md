@@ -6,11 +6,13 @@ An AI card generating game built with Swift and UIKit.
 
 ```
 InfiniteCards/
-├── AppDelegate.swift           # App entry point (like index.js in React)
-├── Card.swift                  # Data model (like TypeScript interfaces)
-├── cards.json                  # Card data
-├── CardsListViewController.swift    # Main screen (like App.js)
-└── CardCollectionViewCell.swift     # Card component (like Card.jsx)
+├── AppDelegate.swift               # App entry point (like index.js in React)
+├── Card.swift                      # Data model (like TypeScript interfaces)
+├── cards.json                      # Card data
+├── CardsListViewController.swift   # Main screen (like App.js)
+├── CardCollectionViewCell.swift    # Card component (like Card.jsx)
+├── CardDetailViewController.swift  # Detail popup (like Modal component)
+└── UIImage+Gradient.swift          # Helper extension for gradient images
 ```
 
 ## Architecture Comparison: Swift/iOS vs React
@@ -50,24 +52,48 @@ InfiniteCards/
 ## Running the App
 
 1. Open `InfiniteCards.xcodeproj` in Xcode
-2. Select a simulator or device
-3. Press Cmd+R to build and run
+2. Add the JSON file to the project (if not already added):
+   - Right-click on "InfiniteCards" folder in Xcode
+   - Select "Add Files to InfiniteCards..."
+   - Select all new Swift files and `cards.json`
+   - Ensure "Copy items if needed" and "Add to targets: InfiniteCards" are checked
+3. Select a simulator or device
+4. Press Cmd+R to build and run
 
 ## Current Features
 
-- Display cards in a grid layout
+- Display cards in a grid layout with placeholder images
+- Color-coded gradient backgrounds based on character class
 - Show card stats, level, rating, and win/loss record
 - Responsive layout (2 columns on phones, 3 on iPads)
-- Color-coded ratings
+- **NEW: Detailed card popup on tap** showing:
+  - Full stats with progress bars
+  - Social stats (likes, wins, losses, win rate)
+  - Larger placeholder image with character initial
+  - Smooth modal presentation with backdrop
+- Tap outside popup or X button to close
+
+## Placeholder Images
+
+Each card displays a gradient placeholder image with:
+- Class-specific color schemes:
+  - **Warrior**: Red to Orange
+  - **Mage/Sage/Stormcaster**: Blue to Purple
+  - **Thief/Assassin/Shadowpriest**: Gray to Black
+  - **Guardian/Vanguard**: Brown to Gray
+  - **Ranger**: Green to Yellow
+  - **Others**: Indigo to Teal
+- Character's first initial displayed prominently
 
 ## Planned Features
 
-- Card detail popup on tap
-- AI card generation
-- Battle system
+- AI-generated character images (replacing placeholders)
+- Battle system between cards
+- Card generation using AI
 - User authentication
-- Card collection management 
-
+- Card collection management
+- Trading system
+- Deck building
 
 ###################################################
 ## How MVC Works in iOS/UIKit
