@@ -6,6 +6,59 @@ class CardsListViewController: UIViewController {
     // Data source - like state in React
     private var cards: [Card] = []
     
+    // Currency header view
+    private let currencyHeaderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        return view
+    }()
+    
+    private let diamondsContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemIndigo.withAlphaComponent(0.1)
+        view.layer.cornerRadius = 12
+        return view
+    }()
+    
+    private let goldContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemYellow.withAlphaComponent(0.1)
+        view.layer.cornerRadius = 12
+        return view
+    }()
+    
+    private let diamondsIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "diamond.fill")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemIndigo
+        return imageView
+    }()
+    
+    private let goldIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "coins.fill")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .systemYellow
+        return imageView
+    }()
+    
+    private let diamondsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "2,600"
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
+        label.textColor = .systemIndigo
+        return label
+    }()
+    
+    private let goldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "250K"
+        label.font = .systemFont(ofSize: 13, weight: .semibold)
+        label.textColor = .systemYellow
+        return label
+    }()
+    
     // Collection view - like a FlatList in React Native
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -30,17 +83,78 @@ class CardsListViewController: UIViewController {
     }
     
     private func setupUI() {
-        title = "Infinite Cards"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        // Remove title and large titles
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.title = nil
+        
         view.backgroundColor = .systemGroupedBackground
+        
+        // Add currency header
+        view.addSubview(currencyHeaderView)
+        currencyHeaderView.addSubview(diamondsContainer)
+        currencyHeaderView.addSubview(goldContainer)
+        
+        diamondsContainer.addSubview(diamondsIcon)
+        diamondsContainer.addSubview(diamondsLabel)
+        goldContainer.addSubview(goldIcon)
+        goldContainer.addSubview(goldLabel)
         
         // Add collection view to view hierarchy
         view.addSubview(collectionView)
+        
+        // Setup constraints
+        currencyHeaderView.translatesAutoresizingMaskIntoConstraints = false
+        diamondsContainer.translatesAutoresizingMaskIntoConstraints = false
+        goldContainer.translatesAutoresizingMaskIntoConstraints = false
+        diamondsIcon.translatesAutoresizingMaskIntoConstraints = false
+        goldIcon.translatesAutoresizingMaskIntoConstraints = false
+        diamondsLabel.translatesAutoresizingMaskIntoConstraints = false
+        goldLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Set constraints - like flex styles in React Native
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            // Currency header
+            currencyHeaderView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            currencyHeaderView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            currencyHeaderView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            currencyHeaderView.heightAnchor.constraint(equalToConstant: 36),
+            
+            // Diamonds container
+            diamondsContainer.centerYAnchor.constraint(equalTo: currencyHeaderView.centerYAnchor),
+            diamondsContainer.trailingAnchor.constraint(equalTo: currencyHeaderView.centerXAnchor, constant: -8),
+            diamondsContainer.heightAnchor.constraint(equalToConstant: 28),
+            diamondsContainer.widthAnchor.constraint(equalToConstant: 90),
+            
+            // Gold container
+            goldContainer.centerYAnchor.constraint(equalTo: currencyHeaderView.centerYAnchor),
+            goldContainer.leadingAnchor.constraint(equalTo: currencyHeaderView.centerXAnchor, constant: 8),
+            goldContainer.heightAnchor.constraint(equalToConstant: 28),
+            goldContainer.widthAnchor.constraint(equalToConstant: 90),
+            
+            // Diamonds icon
+            diamondsIcon.leadingAnchor.constraint(equalTo: diamondsContainer.leadingAnchor, constant: 8),
+            diamondsIcon.centerYAnchor.constraint(equalTo: diamondsContainer.centerYAnchor),
+            diamondsIcon.widthAnchor.constraint(equalToConstant: 16),
+            diamondsIcon.heightAnchor.constraint(equalToConstant: 16),
+            
+            // Diamonds label
+            diamondsLabel.leadingAnchor.constraint(equalTo: diamondsIcon.trailingAnchor, constant: 8),
+            diamondsLabel.centerYAnchor.constraint(equalTo: diamondsContainer.centerYAnchor),
+            diamondsLabel.trailingAnchor.constraint(equalTo: diamondsContainer.trailingAnchor, constant: -12),
+            
+            // Gold icon
+            goldIcon.leadingAnchor.constraint(equalTo: goldContainer.leadingAnchor, constant: 8),
+            goldIcon.centerYAnchor.constraint(equalTo: goldContainer.centerYAnchor),
+            goldIcon.widthAnchor.constraint(equalToConstant: 16),
+            goldIcon.heightAnchor.constraint(equalToConstant: 16),
+            
+            // Gold label
+            goldLabel.leadingAnchor.constraint(equalTo: goldIcon.trailingAnchor, constant: 8),
+            goldLabel.centerYAnchor.constraint(equalTo: goldContainer.centerYAnchor),
+            goldLabel.trailingAnchor.constraint(equalTo: goldContainer.trailingAnchor, constant: -12),
+            
+            // Collection view - adjusted to be below currency header
+            collectionView.topAnchor.constraint(equalTo: currencyHeaderView.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)

@@ -17,14 +17,64 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Create window programmatically
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        // Create our cards list view controller
+        // Create tab bar controller
+        let tabBarController = UITabBarController()
+        
+        // Create our view controllers
         let cardsListVC = CardsListViewController()
+        let storeVC = UIViewController() // Placeholder
+        let summonVC = UIViewController() // Placeholder
+        let settingsVC = UIViewController() // Placeholder
         
-        // Wrap it in a navigation controller for navigation bar
-        let navigationController = UINavigationController(rootViewController: cardsListVC)
+        // Wrap each in navigation controller
+        let cardsNavController = UINavigationController(rootViewController: cardsListVC)
+        let storeNavController = UINavigationController(rootViewController: storeVC)
+        let summonNavController = UINavigationController(rootViewController: summonVC)
+        let settingsNavController = UINavigationController(rootViewController: settingsVC)
         
-        // Set the navigation controller as root
-        window?.rootViewController = navigationController
+        // Configure tab bar items
+        cardsNavController.tabBarItem = UITabBarItem(
+            title: "Cards",
+            image: UIImage(systemName: "square.grid.2x2"),
+            selectedImage: UIImage(systemName: "square.grid.2x2.fill")
+        )
+        
+        storeNavController.tabBarItem = UITabBarItem(
+            title: "Store",
+            image: UIImage(systemName: "bag"),
+            selectedImage: UIImage(systemName: "bag.fill")
+        )
+        
+        summonNavController.tabBarItem = UITabBarItem(
+            title: "Summon",
+            image: UIImage(systemName: "arrow.2.squarepath"),
+            selectedImage: UIImage(systemName: "arrow.2.squarepath")
+        )
+        
+        settingsNavController.tabBarItem = UITabBarItem(
+            title: "Settings",
+            image: UIImage(systemName: "gearshape"),
+            selectedImage: UIImage(systemName: "gearshape.fill")
+        )
+        
+        // Set the view controllers
+        tabBarController.viewControllers = [
+            cardsNavController,
+            storeNavController,
+            summonNavController,
+            settingsNavController
+        ]
+        
+        // Set tab bar appearance
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
+        tabBarController.tabBar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            tabBarController.tabBar.scrollEdgeAppearance = appearance
+        }
+        
+        // Set as root view controller
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
         
         return true
